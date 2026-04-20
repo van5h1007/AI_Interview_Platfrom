@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { auth } from '../auth';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { getToken } from "next-auth/jwt"
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/profile')) {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.redirect(new URL('/login', request.url));
+    const token = await getToken({ req: request })
+
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url))
     }
   }
 
-  return NextResponse.next();
+  return NextResponse.next()
 }
